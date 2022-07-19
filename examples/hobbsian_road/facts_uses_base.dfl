@@ -1,0 +1,5 @@
+=> freeMotionDirection(down)
+=> freeMotionDirection(horizontal)
+=> at(hotSoup,bowl)
+=> -at(table,bowl)
+

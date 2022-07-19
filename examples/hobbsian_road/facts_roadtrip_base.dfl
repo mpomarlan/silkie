@@ -1,0 +1,5 @@
+=> at(car, route66)
+=> at(thing, route66)
+=> at(Bolzano, route66)
+=> hasDestination(car, Bolzano)
+=> Trajector(car)

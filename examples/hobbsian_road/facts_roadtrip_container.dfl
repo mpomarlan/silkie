@@ -1,0 +1,5 @@
+=> hasContainer(schema, route66)
+=> -inside(Bolzano, route66)
+=> outside(Bolzano, route66)
+=> um(thing, route66)
+

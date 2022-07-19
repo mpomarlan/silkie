@@ -1,0 +1,36 @@
+0: hasPath(?s,?x) => Path(?x)
+1: Path(?w), on(?x,?w), on(?y,?w), on(?z,?w), after(?y,?x), after(?z,?y), willBeAt(?x,?z) => passThrough(?x,?y)
+2: Path(?w), on(?x,?w), on(?y,?w), on(?z,?w), after(?y,?x), after(?z,?y), willBeAt(?x,?z) => -canAvoid(?x,?y)
+3: hasMedium(?s,?x) => Medium(?x)
+4: Medium(?w), on(?x,?w), on(?y,?w), Trajector(?x) => -passThrough(?x,?y)
+4b: Medium(?w), on(?x,?w), on(?y,?w), Trajector(?x), willBeAt(?x,?y) => passThrough(?x,?y)
+5: Medium(?w), on(?x,?w), on(?y,?w), Trajector(?x) => canAvoid(?x,?y)
+5b: Medium(?w), on(?x,?w), on(?y,?w), Trajector(?x), willBeAt(?x,?y) => -canAvoid(?x,?y)
+6: hasContainer(?s,?x) => Container(?x)
+7: Container(?w), inside(?x,?w), outside(?y,?w), hasBoundary(?w,?z), willBeAt(?x,?y) => passThrough(?x,?z)
+8: Container(?w), inside(?x,?w), outside(?y,?w), hasBoundary(?w,?z), willBeAt(?x,?y) => -canAvoid(?x,?z)
+9: freeMotionDirection(?x), blocks(?w,?x) => Container(?w)
+10: freeMotionDirection(?x), -blocks(?w,?x) => -Container(?w)
+11: Container(?w), freeMotionDirection(?x) => blocks(?w,?x)
+12: Container(?w), inside(?x,?w), outside(?y,?w) => protectedFrom(?y,?x)
+13: protectedFrom(?x,?y), at(?y,?w), -at(?x,?w) => Container(?w)
+###
+14: Path(?w), at(?x,?w) => on(?x,?w)
+15: Medium(?w), at(?x,?w) => on(?x,?w)
+16: Container(?w), at(?x,?w) => inside(?x,?w)
+17: Container(?w), -at(?x,?w) => outside(?x,?w)
+18: Container(?w), um(?x,?w) => hasBoundary(?w,?x)
+19: Path(?w) => LocationRole(?w)
+20: Medium(?w) => LocationRole(?w)
+21: Container(?w) => LocationRole(?w)
+22: LocationRole(?w), at(?x,?w), hasDestination(?x,?y) => willBeAt(?x,?y)
+###
+23: LocationRole(?w), at(?x,?w) => -canAvoid(?x,?x)
+24: LocationRole(?w), at(?x,?w) => -passThrough(?x,?x)
+25: Container(?w), outside(?x,?w) => -canAvoid(?x,?x)
+26: Container(?w), outside(?x,?w) => -passThrough(?x,?x)
+5 > 2
+7 > 4
+8 > 5
+10 > 9
+

@@ -1,0 +1,13 @@
+0: canIgnite(?x,?y) => hasDisp(?y,Flammable)
+1: canIgnite(?x,?y) => hasDisp(?x,Ignition)
+2: -hasDisp(?x,Flammable), Object(?y) => -canIgnite(?y,?x)
+3: hasDisp(?x,Flammable), hasDisp(?y,Ignition) => canIgnite(?y,?x)
+4: Fire(?x), hasOxidizer(?x,?y), -canIgnite(?y,?z), inside(?w,?z) => protectedFrom(?w,?x)
+5: Fire(?x), hasOxidizer(?x,?y), canIgnite(?y,?z), inside(?w,?z) => -protectedFrom(?w,?x)
+6: Sand(?x) => -hasDisp(?x,Flammable)
+7: ExceptionalIgnition_0(?x), Sand(?y) => canIgnite(?x,?y)
+8: ClF3(?x) => ExceptionalIgnition_0(?x)
+9: ClF3(?x) => Object(?x)
+6 > 0
+7 > 2
+

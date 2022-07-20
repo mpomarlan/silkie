@@ -1,12 +1,26 @@
+# Where ignition can occur we will conclude appropriate dispositions are present
 0: canIgnite(?x,?y) => hasDisp(?y,Flammable)
 1: canIgnite(?x,?y) => hasDisp(?x,Ignition)
+
+# Unability to ignite suggests the absence of the flammable disposition
 2: Fire(?x), -canIgnite(?x,?y) => -hasDisp(?y,Flammable)
+
+# Protection from fire if and only if inside something the fire cannot ignite
 3: Fire(?x), -canIgnite(?x,?y), inside(?z,?y) => protectedFrom(?z,?x)
 4: Fire(?x), canIgnite(?x,?y), inside(?z,?y) => -protectedFrom(?z,?x)
+
+# Fire can ignite fuel, but not sand
 5: Fire(?x), Fuel(?y) => canIgnite(?x,?y)
 6: Fire(?x), Sand(?y) => -canIgnite(?x,?y)
+
+# Fire that has an exceptional oxidizer is able to ignite sand
 7: Fire(?x), hasOxidizer(?x,?y), ExceptionalIgnition_0(?y), Sand(?z) => canIgnite(?x,?z)
+
+# Chlorine Tri-Fluoride is an exceptional oxidizer
 8: ClF3(?x) => ExceptionalIgnition_0(?x)
+
+# Rule priorities:
+# Exceptional ignition can ignite things that fires would otherwise be unable to ignite
 7 > 6
 
 

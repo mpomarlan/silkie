@@ -1,36 +1,61 @@
+# The theory of paths: must pass through points on a path in sequence, and an intermediate point cannot be avoided
 0: hasPath(?s,?x) => Path(?x)
 1: Path(?w), on(?x,?w), on(?y,?w), on(?z,?w), after(?y,?x), after(?z,?y), willBeAt(?x,?z) => passThrough(?x,?y)
 2: Path(?w), on(?x,?w), on(?y,?w), on(?z,?w), after(?y,?x), after(?z,?y), willBeAt(?x,?z) => -canAvoid(?x,?y)
+
+# The theory of mediums: no need to pass through all points in a medium, as these can be avoided
 3: hasMedium(?s,?x) => Medium(?x)
 4: Medium(?w), on(?x,?w), on(?y,?w), Trajector(?x) => -passThrough(?x,?y)
 4b: Medium(?w), on(?x,?w), on(?y,?w), Trajector(?x), willBeAt(?x,?y) => passThrough(?x,?y)
 5: Medium(?w), on(?x,?w), on(?y,?w), Trajector(?x) => canAvoid(?x,?y)
+# To prevent concluding that the destination can be avoided
+# Note, a defeater could also be used for this effect (we want to prevent a conclusion but not assert its opposite)
 5b: Medium(?w), on(?x,?w), on(?y,?w), Trajector(?x), willBeAt(?x,?y) => -canAvoid(?x,?y)
+
+# The theory of containers: moving from inside to the outside must pass through the boundary which is therefore not avoidable
 6: hasContainer(?s,?x) => Container(?x)
 7: Container(?w), inside(?x,?w), outside(?y,?w), hasBoundary(?w,?z), willBeAt(?x,?y) => passThrough(?x,?z)
 8: Container(?w), inside(?x,?w), outside(?y,?w), hasBoundary(?w,?z), willBeAt(?x,?y) => -canAvoid(?x,?z)
+
+# A theory of containers as blockers of "free motions" (motions objects would take without being actuated agentively)
 9: freeMotionDirection(?x), blocks(?w,?x) => Container(?w)
 10: freeMotionDirection(?x), -blocks(?w,?x) => -Container(?w)
 11: Container(?w), freeMotionDirection(?x) => blocks(?w,?x)
+
+# A theory of containers as protectors of the outside from what they hold within
 12: Container(?w), inside(?x,?w), outside(?y,?w) => protectedFrom(?y,?x)
 13: protectedFrom(?x,?y), at(?y,?w), -at(?x,?w) => Container(?w)
-###
+
+
+# Vocabulary translation: use predicates specific for objects such as Paths, Mediums, and Containers, to avoid triggering all their rules
 14: Path(?w), at(?x,?w) => on(?x,?w)
 15: Medium(?w), at(?x,?w) => on(?x,?w)
 16: Container(?w), at(?x,?w) => inside(?x,?w)
 17: Container(?w), -at(?x,?w) => outside(?x,?w)
 18: Container(?w), um(?x,?w) => hasBoundary(?w,?x)
+
+# Paths, Mediums, Containers are location roles, i.e. they (also) specify how some entities are spatially related
 19: Path(?w) => LocationRole(?w)
 20: Medium(?w) => LocationRole(?w)
 21: Container(?w) => LocationRole(?w)
+
+# A trajector moving at/through some location and with a destination will eventually get to its destination
 22: LocationRole(?w), at(?x,?w), hasDestination(?x,?y) => willBeAt(?x,?y)
-###
+
+# Some sanity-enforcement rules:
+# An object cannot avoid itself, nor does it pass through itself
 23: LocationRole(?w), at(?x,?w) => -canAvoid(?x,?x)
 24: LocationRole(?w), at(?x,?w) => -passThrough(?x,?x)
+# Same thing, but since the outside of a container is represented by -at, we need an adjusted copy of those rules
 25: Container(?w), outside(?x,?w) => -canAvoid(?x,?x)
 26: Container(?w), outside(?x,?w) => -passThrough(?x,?x)
+
+# Rule priorities
+# Being a Medium and a Path still concludes avoidance is possible
 5 > 2
+# Being a Container and a Medium still concludes the boundary must be passed through and cannot be avoided
 7 > 4
 8 > 5
+# If something cannot block a "free motion", then it is not a Container regardless of how many other "free motions" it blocks
 10 > 9
 

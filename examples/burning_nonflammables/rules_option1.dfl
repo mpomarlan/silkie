@@ -1,13 +1,32 @@
+# if an item can ignite another, then they have the appropriate dispositions
 0: canIgnite(?x,?y) => hasDisp(?y,Flammable)
 1: canIgnite(?x,?y) => hasDisp(?x,Ignition)
+
+# if something is non-flammable then nothing can ignite it
 2: -hasDisp(?x,Flammable), Object(?y) => -canIgnite(?y,?x)
+
+# where there are items with the appropriate dispositions, ignition can occur
 3: hasDisp(?x,Flammable), hasDisp(?y,Ignition) => canIgnite(?y,?x)
+
+# Protection from fire: if and only if inside a thing that the fire cannot ignite
 4: Fire(?x), hasOxidizer(?x,?y), -canIgnite(?y,?z), inside(?w,?z) => protectedFrom(?w,?x)
 5: Fire(?x), hasOxidizer(?x,?y), canIgnite(?y,?z), inside(?w,?z) => -protectedFrom(?w,?x)
+
+# Sand is not flammable
 6: Sand(?x) => -hasDisp(?x,Flammable)
+
+# Reified exception: some things can ignite sand ...
 7: ExceptionalIgnition_0(?x), Sand(?y) => canIgnite(?x,?y)
+
+# ... and Chlorine Tri-Fluoride is one such thing
 8: ClF3(?x) => ExceptionalIgnition_0(?x)
+
+# Various things are objects
 9: ClF3(?x) => Object(?x)
+
+# Priority relations:
+# Even if sand is ignited, we'll still conclude it does not have the flammable disposition
 6 > 0
+# Exceptional ignition of non-flammable things
 7 > 2
 

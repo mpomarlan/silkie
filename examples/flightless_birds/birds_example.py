@@ -8,7 +8,7 @@ import silkie.silkie as silkie
 
 import time
 
-def runExample(mode=None,exceptions=10):
+def runExample(mode=None,exceptions=10, iterations=1):
     if mode not in ['fast', 'slow', 'reified_exceptions']:
         mode = 'fast'
     with open("rules.dfl","w") as outfile:
@@ -23,6 +23,21 @@ def runExample(mode=None,exceptions=10):
             _ = outfile.write("X: bird(?x), Exception(?x) => -flies(?x)\nX > 0\n")
             for k in range(exceptions):
                 _ = outfile.write("%d: P%d(?x) => Exception(?x)\n" % (k+1,k+1))
+    if 1 < iterations:
+        rules = silkie.loadDFLRules('rules.dfl')
+        factsWillFly = silkie.loadDFLFacts('facts_will_fly.dfl')
+        factsWontFly = silkie.loadDFLFacts('facts_wont_fly.dfl')
+        start_benchmark = time.perf_counter()
+        for k in range(iterations):
+            theoryF, s2iF, i2sF, theoryStrF = silkie.buildTheory(rules,factsWillFly,{},debugTheory=True)
+            theoryNF, s2iNF, i2sNF, theoryStrNF = silkie.buildTheory(rules,factsWontFly,{},debugTheory=True)
+            conclusionsF = silkie.dflInference(theoryF)
+            conclusionsF = silkie.idx2strConclusions(conclusionsF, i2sF)
+            conclusionsNF = silkie.dflInference(theoryNF)
+            conclusionsNF = silkie.idx2strConclusions(conclusionsNF, i2sNF)
+        end_benchmark = time.perf_counter()
+        print('Benchmark in mode \"%s\" with %d exceptions for %d iterations: %f\n\n' % (str(mode), exceptions, iterations, end_benchmark-start_benchmark))
+        return       
     start_loadRules = time.perf_counter()
     rules = silkie.loadDFLRules('rules.dfl')
     end_loadRules = time.perf_counter()
@@ -46,6 +61,12 @@ def runExample(mode=None,exceptions=10):
     os.remove('rules.dfl')
 
 def main():
+    runExample(mode='slow', exceptions=10, iterations=1000)
+    runExample(mode='slow', exceptions=100, iterations=1000)
+    runExample(mode='fast', exceptions=10, iterations=1000)
+    runExample(mode='fast', exceptions=100, iterations=1000)
+    runExample(mode='reified_exceptions', exceptions=10, iterations=1000)
+    runExample(mode='reified_exceptions', exceptions=100, iterations=1000)
     runExample(mode='slow',exceptions=10)
     runExample(mode='slow',exceptions=100)
     runExample(mode='slow',exceptions=1000)

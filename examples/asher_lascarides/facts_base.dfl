@@ -1,0 +1,11 @@
+# Sentence describing event. Another sentence follows it and describes an event. They are in some discourse relationship.
+-> discourseDirectConnection(s1, s2)
+-> hasEvent(s1, e1)
+-> hasEvent(s2, e2)
+# Events have "times". At the moment, the times are just some kind of temporal object, regardless of whether interval or point.
+-> hasTime(e1, t1)
+-> hasTime(e2, t2)
+# Not actually needed for the inferences in the Asher-Lascarides examples, but there to specify tense: the events happened in the past.
+-> precedes(t1, now)
+-> precedes(t2, now)
+

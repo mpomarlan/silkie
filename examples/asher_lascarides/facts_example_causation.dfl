@@ -1,0 +1,7 @@
+# Max fell. John pushed him.
+-> hasAction(e1, fall)
+-> hasAgent(e1, max)
+-> hasAction(e2, push)
+-> hasAgent(e2, john)
+# Just like in the Asher-Lascarides paper, pronoun resolution is assumed done by some other magic.
+-> hasPatient(e2, max)

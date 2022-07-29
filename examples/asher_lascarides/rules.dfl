@@ -8,6 +8,13 @@ o0c: -overlap(?e,?f) => -overlap(?f,?e)
 o1: overlap(?e,?f) => -precedes(?e,?f)
 op: precedes(?e,?f) => -overlap(?e,?f)
 
+# Unmarked discourse relation theory
+#     consecutive texts are possibly related by some discourse relation
+next: next(?b,?a) => discourseDirectConnection(?a,?b)
+#     connecting to an elaboration connects also to the thing being elaborated
+#         note: this should be sufficient to create the discourse pop behavior
+elabcont: elaboration(?a,?b), discourseDirectConnection(?b,?c) => discourseDirectConnection(?a,?c)
+
 # Narration theory
 #     unless info to the contrary, discourse related clauses a and b are in a narration relation
 n0: discourseDirectConnection(?a, ?b) => narration(?a, ?b)
@@ -16,6 +23,15 @@ n1: narration(?a,?b), hasEvent(?a,?e), hasEvent(?b,?f) => precedes(?e,?f)
 #     Contrapositive axiom of narration. Needed because the prop. defeasible logic of Nute will not automatically do contrapositive reasoning, but this seems required by the Asher-Lascarides examples.
 n2: -precedes(?e,?f), hasEvent(?a,?e), hasEvent(?b,?f) => -narration(?a,?b)
 n2 > n0
+#     Constraint on Narration: cannot narrate from an elaboration without being an elaboration of the same thing
+nc: elaboration(?a,?b), discourseDirectConnection(?b,?c), -elaboration(?a,?c) => -narration(?b,?c)
+nc > n0
+#     Constraint on Narration: elaborating an elaboration is not a narration from the elaborated top
+#         note: a more detailed temporal relation theory might not need this. In the paper however Asher-Lascarides define Elaboration and Narration in terms of the precedes, -precedes relation
+#         I.e., if b elaborates a, and c elaborates b, we have -precedes(a,b) and -precedes(b,c)
+#         which still leaves open the temporal order precedes(a,c), 
+nce: elaboration(?a,?b), elaboration(?b,?c) => -narration(?a,?c)
+nce > n0
 
 # Explanation theory
 #     clauses that are linked by a discourse relation and which express causally connected events are connected via explanation
@@ -26,9 +42,18 @@ e1: explanation(?a,?b), hasEvent(?a,?e), hasEvent(?b,?f) => -precedes(?e,?f)
 e2: precedes(?e,?f), hasEvent(?a,?e), hasEvent(?b,?f) => -explanation(?a,?b)
 
 # Elaboration theory
+#     default: two descriptions are not elaborations of each other
+#         note: this is somewhat different from the paper. They use a defeasibly necessary test for elaboration: if an event does not prepare another, it is not an elaboration
+#         however, this requires them to explicitly assert that winning a dance is not a preparation for a meal;
+#         long-term, a reliance on explicit negations of preparation relations will not scale well, hence the use of a default here: unless explicitly known that an event prepares or is part of another etc. then no elaboration relation holds.
+eld: discourseDirectConnection(?a, ?b) => -elaboration(?a,?b)
 #     clauses that are linked by a discourse relation and which express events where one prepares the other are connected via elaboration
-el0: discourseDirectConnection(?a, ?b), hasEvent(?a,?e), hasEvent(?b,?f), prepares(?f,?e) => elaboration(?a,?b)
-#     Axiom of Elaboration: if explanation, then associated events are in an appropriate precedence relation
+el0prep: discourseDirectConnection(?a, ?b), hasEvent(?a,?e), hasEvent(?b,?f), prepares(?f,?e) => elaboration(?a,?b)
+el0prep > eld
+#     clauses that are linked by a discourse relation and which express events where one is part of the other are connected via elaboration
+el0part: discourseDirectConnection(?a, ?b), hasEvent(?a,?e), hasEvent(?b,?f), hasPart(?e,?f) => elaboration(?a,?b)
+el0part > eld
+#     Axiom of Elaboration: if elaboration, then associated events are in an appropriate precedence relation
 el1: elaboration(?a,?b), hasEvent(?a,?e), hasEvent(?b,?f) => -precedes(?e,?f)
 #     Contrapositive axiom of elaboration
 el2: precedes(?e,?f), hasEvent(?a,?e), hasEvent(?b,?f) => -elaboration(?a,?b)
@@ -104,4 +129,9 @@ room: room(?x) => structure(?x)
 buildNeedsPlan: hasAction(?e,build), hasPatient(?e,?x), structure(?x), hasEvent(?a,?e), discourseDirectConnection(?a,?b), hasEvent(?b,?f), hasResult(?f,?p), plan(?p), designFor(?p,?x) => hasResource(?e,?p)
 # Default assumption: if a structure and a plan are mentioned in discourse-connected clauses, the plan and structure are connected.
 connectStructureAndPlan: hasPatient(?e,?x), structure(?x), hasResult(?f,?p), plan(?p), hasEvent(?a,?e), hasEvent(?b,?f), discourseDirectConnection(?a,?b) => designFor(?p, ?x)
+
+# Theory of meals and lovely evenings
+mealPartOfGoodTimeOfDay: hasAction(?f,have), hasAction(?e,have), hasPatient(?f,?m), meal(?m), hasPatient(?e,?l), timeOfDay(?l), enjoyable(?l), hasEvent(?a,?e), hasEvent(?b,?f), discourseDirectConnection(?a,?b) => prepares(?f,?e)
+dishPartOfMeal: hasAction(?f,eat), hasAction(?e,have), hasPatient(?f,?d), dish(?d), hasPatient(?e,?m), meal(?m), hasEvent(?a,?e), hasEvent(?b,?f), discourseDirectConnection(?a,?b) => prepares(?f,?e)
+winningPartOfGoodTimeOfDay: hasAction(?f,win), hasAction(?e,have), hasPatient(?f,?c), competition(?c), hasPatient(?e,?l), timeOfDay(?l), enjoyable(?l), hasEvent(?a,?e), hasEvent(?b,?f), discourseDirectConnection(?a,?b) => prepares(?f,?e)
 

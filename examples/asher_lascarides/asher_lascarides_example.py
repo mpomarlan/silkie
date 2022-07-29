@@ -37,6 +37,12 @@ def main():
         print('==========\n%s' % msg)
         reportTargetConclusions(theory, i2s, ['narration', '-narration', 'explanation', '-explanation', 'elaboration', '-elaboration', 'background', '-background', 'result', '-result'])
 
+    factsEvening = silkie.loadDFLFacts('./facts_example_discourse_pop.dfl')
+    theoryEvening, s2iEvening, i2sEvening, theoryStrEvening = silkie.buildTheory(rules,factsEvening,{},debugTheory=True)
+    print('==========\n%s' % "Discourse pop: Guy had a lovely evening. He had a meal. He ate salmon. He ate cheese. He won a competition.")
+    reportTargetConclusions(theoryEvening, i2sEvening, ['narration', 'explanation', 'elaboration', 'background', 'result'])
+
+
 if __name__ == '__main__':
     main()
 

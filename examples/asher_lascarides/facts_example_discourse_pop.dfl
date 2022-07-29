@@ -1,0 +1,43 @@
+# Guy had a lovely evening. He had a fantastic meal. He ate salmon. He ate cheese. He won a dancing competition.
+-> hasEvent(sa, ea)
+-> hasEvent(sb, eb)
+-> hasEvent(sc, ec)
+-> hasEvent(sd, ed)
+-> hasEvent(se, ee)
+-> next(sb, sa)
+-> next(sc, sb)
+-> next(sd, sc)
+-> next(se, sd)
+# Events have "times". At the moment, the times are just some kind of temporal object, regardless of whether interval or point.
+-> hasTime(ea, ta)
+-> hasTime(eb, tb)
+-> hasTime(ec, tc)
+-> hasTime(ed, td)
+-> hasTime(ee, te)
+# Events have agents
+#     just like in the paper, we assume some magic has handled pronoun resolution so we know who the agent is every time.
+-> hasAgent(ea, guy)
+-> hasAgent(eb, guy)
+-> hasAgent(ec, guy)
+-> hasAgent(ed, guy)
+-> hasAgent(ee, guy)
+# Events have various participants
+-> hasAction(ea, have)
+-> hasAction(eb, have)
+-> hasAction(ec, eat)
+-> hasAction(ed, eat)
+-> hasAction(ee, win)
+-> hasPatient(ea, lovelyEvening)
+-> timeOfDay(lovelyEvening)
+-> enjoyable(lovelyEvening)
+-> hasPatient(eb, meal)
+-> meal(meal)
+-> hasPatient(ec, salmon)
+-> dish(salmon)
+-> hasPatient(ed, cheese)
+-> dish(cheese)
+-> hasPatient(ee, competition)
+-> competition(competition)
+
+
+

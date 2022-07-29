@@ -1,0 +1,11 @@
+# Max switched off the light. The room was dark.
+-> hasAction(e1, switchOff)
+-> hasAgent(e1, max)
+-> hasPatient(e1, light)
+-> light(light)
+-> hasAction(e2, propertyAscription)
+-> hasDomain(e2, room)
+-> room(room)
+-> hasRange(e2, dark)
+
+ 

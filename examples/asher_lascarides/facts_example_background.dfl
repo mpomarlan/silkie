@@ -1,0 +1,9 @@
+# Max opened the door. The room was dark.
+-> hasAction(e1, open)
+-> hasAgent(e1, max)
+-> hasPatient(e1, door)
+-> hasAction(e2, propertyAscription)
+-> hasDomain(e2, room)
+-> hasRange(e2, dark)
+
+

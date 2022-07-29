@@ -1,0 +1,10 @@
+ # The council built the bridge. The architect drew up the plans.
+-> hasAction(e1, build)
+-> hasAgent(e1, council)
+-> hasPatient(e1, bridge)
+-> bridge(bridge)
+-> hasAction(e2, draw)
+-> hasAgent(e2, architect)
+-> hasResult(e2, plan)
+-> plan(plan)
+

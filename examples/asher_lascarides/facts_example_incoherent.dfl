@@ -1,0 +1,11 @@
+# Max won the race. Max was home.
+-> hasAction(e1, win)
+-> hasAgent(e1, max)
+-> hasPatient(e1, race)
+-> hasAction(e2, spatialLocating)
+-> hasAgent(e2, max)
+-> hasLocation(e2, home)
+-> home(home)
+-> race(race)
+
+

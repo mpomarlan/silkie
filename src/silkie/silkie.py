@@ -858,10 +858,6 @@ def buildTheory(rules, relevantFacts, knowledgeBase, debugTheory=False):
         auxMaskNew = set()
         crPredicates = newPredicates
         newPredicates = set()
-        #print("CR Predicates", crPredicates)
-        #print("    ", relevantFacts)
-        #print("    ", newMask)
-        #print("    ", [r._id for r in rules.potentiallyTriggered(crPredicates)])
         for r in rules.potentiallyTriggered(crPredicates):
             instantiations = r.getInstantiations(relevantFacts, knowledgeBase, newMask=newMask)
             if instantiations:

@@ -564,7 +564,7 @@ class RuleTemplate:
             for f in antecedent:
                 if opposing(e,f):
                     return None
-        return (tuple(antecedent), self._operator, tuple(consequent), (self._id, tuple(consequent), tuple(self.dominates)))
+        return (tuple(antecedent), self._operator, tuple(consequent), (self._id, tuple(consequent), tuple(self.dominates), bdgTp))
     def _toposortAntecedents(self, startK):
         retq = []
         toVisit = [startK]
@@ -642,8 +642,8 @@ def flip(consequent):
         retq[0] = "-" + retq[0]
     return tuple(retq)
 def netDominates(a, b):
-    provA, consequentA, subsA = a
-    provB, consequentB, _ = b
+    provA, consequentA, subsA, _ = a
+    provB, consequentB, _, _ = b
     return (provB in subsA) and (consequentA == flip(consequentB))
 def str2idxTheory(rules):
     s2i = {}
@@ -858,6 +858,10 @@ def buildTheory(rules, relevantFacts, knowledgeBase, debugTheory=False):
         auxMaskNew = set()
         crPredicates = newPredicates
         newPredicates = set()
+        #print("CR Predicates", crPredicates)
+        #print("    ", relevantFacts)
+        #print("    ", newMask)
+        #print("    ", [r._id for r in rules.potentiallyTriggered(crPredicates)])
         for r in rules.potentiallyTriggered(crPredicates):
             instantiations = r.getInstantiations(relevantFacts, knowledgeBase, newMask=newMask)
             if instantiations:

@@ -1,0 +1,11 @@
+# John arrived late for work. He had taken the bus. He had totalled his car. His boss summoned him to his office. John's promotion chances seemed low.
+-> hasEvent(se, ee)
+-> next(se, sd)
+-> hasTime(ee, te)
+-> precedes(ee,now)
+# Events have participants.
+-> hasAction(ee,seem)
+-> hasAgent(ee,promotionChance)
+-> hasOwner(promotionChance,john)
+-> hasPatient(ee,low)
+

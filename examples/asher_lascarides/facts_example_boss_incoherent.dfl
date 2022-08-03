@@ -1,0 +1,14 @@
+# John arrived late for work. He had taken the bus. He had totalled his car. His boss summoned him to his office. John had brought his car to a garage.
+-> hasEvent(se, ee)
+-> next(se, sd)
+-> hasTime(ee, te)
+-> precedes(ee, now)
+-> precedes(ee, ed)
+# Events have participants.
+-> hasAction(ee, bring)
+-> hasAgent(ee, john)
+-> hasPatient(ee, car)
+-> hasDestination(ee, garage)
+-> garage(garage)
+
+

@@ -1,0 +1,9 @@
+# The bimetallic strip changed shape. The temperature fell.
+-> hasAction(e1, change)
+-> hasAgent(e1, bimetallicStrip)
+-> hasPatient(e1, shape)
+-> hasAction(e2, fall)
+-> hasAgent(e2, temperature)
+-> bimetallicStrip(bimetallicStrip)
+-> temperature(temperature)
+-> shape(shape)

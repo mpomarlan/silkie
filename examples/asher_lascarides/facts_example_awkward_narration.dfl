@@ -1,0 +1,20 @@
+# Max stood up. John greeted him. Max got up slowly.
+-> hasEvent(sa, ea)
+-> hasEvent(sb, eb)
+-> hasEvent(sc, ec)
+-> next(sb, sa)
+-> next(sc, sb)
+# Events have "times". At the moment, the times are just some kind of temporal object, regardless of whether interval or point.
+-> hasTime(ea, ta)
+-> hasTime(eb, tb)
+-> hasTime(ec, tc)
+# Events have various participants.
+-> hasAction(ea, standUp)
+-> hasAgent(ea, max)
+-> hasAction(eb, greet)
+-> hasAgent(eb, john)
+# Just like in the Asher-Lascarides paper, pronoun resolution is assumed done by some other magic.
+-> hasPatient(eb, max)
+-> hasAction(ec, getUp)
+-> hasAgent(ec, max)
+-> hasManner(ec, slowly)

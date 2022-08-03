@@ -27,6 +27,8 @@ temporal_resolution_discourse: next(?b,?a), hasEvent(?a,?e), hasEvent(?b,?f) => 
 #     connecting to an elaboration connects also to the thing being elaborated
 #         note: this should be sufficient to create the discourse pop behavior
 elabcont: elaboration(?a,?b), discourseDirectConnection(?b,?c) => discourseDirectConnection(?a,?c)
+#     connecting to an explanation connects also to the thing being explained
+explcont: explanation(?a,?b), discourseDirectConnection(?b,?c) => discourseDirectConnection(?a,?c)
 
 # Narration theory
 #     unless info to the contrary, discourse related clauses a and b are in a narration relation
@@ -37,8 +39,11 @@ n1: narration(?a,?b), hasEvent(?a,?e), hasEvent(?b,?f) => precedes(?e,?f)
 n2: -precedes(?e,?f), hasEvent(?a,?e), hasEvent(?b,?f) => -narration(?a,?b)
 n2 > n0
 #     Constraint on Narration: cannot narrate from an elaboration without being an elaboration of the same thing
-nc: elaboration(?a,?b), discourseDirectConnection(?b,?c), -elaboration(?a,?c) => -narration(?b,?c)
-nc > n0
+nc_elaboration: elaboration(?a,?b), discourseDirectConnection(?b,?c), -elaboration(?a,?c) => -narration(?b,?c)
+nc_elaboration > n0
+#     Constraint on Narration: cannot narrate from an explanation without being an explanation of the same thing
+nc_explanation: explanation(?a,?b), discourseDirectConnection(?b,?c), -explanation(?a,?c) => -narration(?b,?c)
+nc_explanation > n0
 
 # Explanation theory
 #     clauses that are linked by a discourse relation and which express causally connected events are connected via explanation
@@ -152,4 +157,43 @@ different_locations_do_not_overlap: hasLocation(?e,?l), -hasLocation(?f,?l) => -
 nopubliceventsatprivatelocation: hasPatient(?e,?pe),publicEvent(?pe),hasLocation(?f,?h),privateLocation(?h) => -hasLocation(?e,?h)
 raceispublic: race(?x) => publicEvent(?x)
 homeisprivate: home(?x) => privateLocation(?x)
+
+# Theory of bimetallic strips (as in a thermostat) and temperature changes for the Dudley Doorite example
+# NOTE: the Dudley Doorite example is impossible to implement as-given in Nute's defeasible logic. However, the Dudley Doorite example as given is itself implausible.
+# That is, it is unlikely that the following conditions will hold together in typical world knowledge:
+#     - there exists a vague event class (e.g., changes shape)
+#     - there exists a fully specified set of concrete events which are ways in which the vague event could unfold (in the Dudley Doorite example, bending and straightening are shape changes AND all shape changes are of this sort)
+# In the case of the Dudley Doorite example from the paper, twisting, stretching with tapering and so on are all plausible shape changes. In general, it is good to keep the list of manners in which a "vague" event
+# could come to pass open-ended, which on the other hand is not what the example assumes -- in it, this list is closed.
+# So alternative implementation, using an open-ended list of manners in which something might come about. 
+tempfall_causes_bending: hasEvent(?a,?e),hasEvent(?b,?f),discourseDirectConnection(?a,?b),hasAgent(?e,?bm),bimetallicStrip(?bm),hasAgent(?f,?t),temperature(?t),hasAction(?e,bend),hasAction(?f,fall) => causes(?f,?e)
+tempfall_causes_bendingmannerof: hasEvent(?a,?e),hasEvent(?b,?f),discourseDirectConnection(?a,?b),hasAgent(?e,?bm),bimetallicStrip(?bm),hasAgent(?f,?t),temperature(?t),hasAction(?e,?act),mannerOf(bend,?e),hasAction(?f,fall) => causes(?f,?e)
+bend_manneorof_shapechange: hasAction(?e,change), hasPatient(?e,?s), shape(?s) => mannerOf(bend,?e)
+
+# Theory of transportation delays
+transport_might_cause_delay: discourseDirectConnection(?a,?b), hasEvent(?a,?e), hasEvent(?b,?f), precedes(?f,?e), arrival(?e), late(?e), transportation(?f), hasAgent(?e,?ag), hasAgent(?f,?ag) => causes(?f,?e)
+damaging_transport_causes_delay: discourseDirectConnection(?a,?b), hasEvent(?a,?e), hasEvent(?b,?f), precedes(?f,?e), arrival(?e), late(?e), damageInfliction(?f), hasAgent(?e,?ag), hasOwner(?t,?ag), hasPatient(?f,?t),meansOfTransport(?t) => causes(?f,?e)
+arrival: hasAction(?e,arrive) => arrival(?e)
+late: hasManner(?e,late) => late(?e)
+transportation: hasAction(?e,take), hasPatient(?e,?t),meansOfTransport(?t) => transportation(?e)
+switch_transport: discourseDirectConnection(?a,?b), hasEvent(?a,?e), hasEvent(?b,?f), transportation(?e), damageInfliction(?f), hasAgent(?e,?ag), hasOwner(?t,?ag), hasPatient(?f,?t), meansOfTransport(?t) => causes(?f,?e)
+bus_is_transport: bus(?x) => meansOfTransport(?x)
+car_is_transport: car(?x) => meansOfTransport(?x)
+totalling_is_damage: hasAction(?e,totalDamage) => damageInfliction(?e)
+
+# Theory of fixing broken things
+#     note, in the paper this is used more as a distraction -- the given example is how, though this theory would license a result to be asserted between one sentence and another, the relative positions
+#     of these sentences in the discourse -- i.e. the intervening sentences and their relationships -- close off the possibility of another discourse relationship.
+fix_broken_car: discourseDirectConnection(?a,?b), hasEvent(?a,?e), hasEvent(?b,?f), damageInfliction(?e), hasPatient(?e,?p), hasOwner(?p,?ag), hasAction(?f,bring), hasAgent(?f,?ag), hasPatient(?f,?p), hasDestination(?f,?d), canRepair(?d,?p) => causes(?e,?f)
+garages_can_fix_cars: car(?x), garage(?y) => canRepair(?y,?x)
+
+# Theory of punctuality expectation
+lateness_means_unhappy: arrival(?e), late(?e), hasExpectant(?e,?wt) => hasMalcontent(?e,?wt)
+
+# Theory of a boss' expectations and behavior when unhappy
+boss_expects_arrival_for_work: arrival(?e),hasDestination(?e,?w),placeOfWork(?w),hasAgent(?e,?ag),hasEmployee(?bs,?ag) => hasExpectant(?e,?bs)
+employment_from_linguistic_possessive: hasOwner(?bs,?ag), boss(?bs) => hasEmployee(?bs,?ag)
+unhappy_boss_summon: discourseDirectConnection(?a,?b), hasEvent(?a,?e), hasEvent(?b,?f), hasAgent(?e,?ag), hasAgent(?f,?bs), hasAction(?f,summon), hasDestination(?f,?l), hasPatient(?f,?ag), hasMalcontent(?e,?bs),hasEmployee(?bs,?ag),near(?l,?bs) => causes(?e,?f)
+office_is_near: hasOwner(?o,?p),office(?o) => near(?o,?p)
+
 

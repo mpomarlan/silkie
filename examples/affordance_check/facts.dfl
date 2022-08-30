@@ -1,0 +1,53 @@
+# We know the ontological type of various objects ...
+-> isA(plasticCup, dfl:plastic_cup.n.wn.artifact)
+-> isA(woodenBeerMug, dfl:wooden_beer_mug.n.wn.artifact)
+-> isA(saucePan, dfl:saucepot.n.wn.artifact)
+-> isA(boiler, dfl:boiler.n.wn.artifact)
+-> isA(gasStove, dfl:gas_oven.n.wn.artifact..domestic)
+
+# From an eventual version of SOMA_DFL for defeasible logic, we know the makeup of some artifacts
+-> hasConstituent(dfl:plastic_cup.n.wn.artifact, dfl:plastic.n.wn.substance)
+-> hasConstituent(dfl:wooden_beer_mug.n.wn.artifact, dfl:wood.n.wn.substance)
+
+# Also know that some processes can have certain combinations of participants. Again, this will eventually be available via the defeasible version of SOMA_DFL
+-> processTemplate(gasStoveBurningPlastic)
+-> processTemplate(gasStoveBurningWood)
+-> hasProcess(gasStoveBurningPlastic, dfl:burn.v.wn.change)
+-> hasProcess(gasStoveBurningWood, dfl:burn.v.wn.change)
+-> hasPatient(gasStoveBurningPlastic, dfl:plastic.n.wn.substance)
+-> hasPatient(gasStoveBurningWood, dfl:wood.n.wn.substance)
+-> hasInstrument(gasStoveBurningPlastic, dfl:gas_oven.n.wn.artifact..domestic)
+-> hasInstrument(gasStoveBurningWood, dfl:gas_oven.n.wn.artifact..domestic)
+
+-> processTemplate(plasticCupHoldsWater)
+-> hasProcess(plasticCupHoldsWater, dfl:contain.v.wn.stative)
+-> hasPatient(plasticCupHoldsWater, dfl:water.n.wn.food)
+-> hasInstrument(plasticCupHoldsWater, dfl:plastic_cup.n.wn.artifact)
+
+-> processTemplate(woodenBeerMugHoldsWater)
+-> hasProcess(woodenBeerMugHoldsWater, dfl:contain.v.wn.stative)
+-> hasPatient(woodenBeerMugHoldsWater, dfl:water.n.wn.food)
+-> hasInstrument(woodenBeerMugHoldsWater, dfl:wooden_beer_mug.n.wn.artifact)
+
+-> processTemplate(saucePanHoldsWater)
+-> hasProcess(saucePanHoldsWater, dfl:contain.v.wn.stative)
+-> hasPatient(saucePanHoldsWater, dfl:water.n.wn.food)
+-> hasInstrument(saucePanHoldsWater, dfl:saucepot.n.wn.artifact)
+
+-> processTemplate(boilerHoldsWater)
+-> hasProcess(boilerHoldsWater, dfl:contain.v.wn.stative)
+-> hasPatient(boilerHoldsWater, dfl:water.n.wn.food)
+-> hasInstrument(boilerHoldsWater, dfl:boiler.n.wn.artifact)
+
+-> patientFor(dfl:plastic_cup.n.wn.artifact, dfl:hold.v.wn.contact)
+-> patientFor(dfl:wooden_beer_mug.n.wn.artifact, dfl:hold.v.wn.contact)
+-> patientFor(dfl:saucepot.n.wn.artifact, dfl:hold.v.wn.contact)
+
+# And from some other source (e.g. process knowledge, PDDL domains etc) we know some processes are irreversible
+-> irreversible(dfl:burn.v.wn.change)
+
+# We want to boil water using stove. This should illustrate a more complex chain of inference eventually: the stove cannot contain the water, so some other container is needed, 
+# and this one must be in contact at some point.
+# For now though, just skip to the conclusion of this inference chain
+-> willContact(gasStove)
+

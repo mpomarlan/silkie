@@ -1,0 +1,8 @@
+# If both patient and instrument for an irreversible process are available, there is a potential threat
+isA(?i, ?it), isA(?p, ?pt), processTemplate(?procT), hasProcess(?procT, ?proc), irreversible(?proc), hasPatient(?procT, ?pt), hasInstrument(?procT, ?it) => potentiallyThreatens(?i, ?p)
+
+# If the instrument of an irreversible process is available, and also some item made of a substance susceptible to that process, there is a potential threat
+isA(?i, ?it), isA(?p, ?pt), hasConstituent(?pt, ?ptc), processTemplate(?procT), hasProcess(?procT, ?proc), irreversible(?proc), hasPatient(?procT, ?ptc), hasInstrument(?procT, ?it) => potentiallyThreatens(?i, ?p)
+
+# Don't bring things threatening each other in contact, that is, avoid making dumb tool selections
+willContact(?i), potentiallyThreatens(?i, ?p) => disqualified(?p)

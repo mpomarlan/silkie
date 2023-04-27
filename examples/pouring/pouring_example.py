@@ -17,6 +17,8 @@ def main():
     rules = reasoner.loadDFLRules('./rules.dfl')
 
     factsPour = reasoner.loadDFLFacts('./facts_pour.dfl')
+    factsPour = reasoner.loadDFLFacts('./facts_opening.dfl', factsPour)
+    factsPour = reasoner.loadDFLFacts('./facts_spill.dfl', factsPour)
 
     theory_canPour, s2i_canPour, i2s_canPour, theoryStr_canPour = \
     reasoner.buildTheory(rules,factsPour,{},debugTheory=True)

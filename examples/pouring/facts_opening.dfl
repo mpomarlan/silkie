@@ -1,0 +1,5 @@
+=> outside(out, teapot)
+=> willBeAt(tea, out)
+=> hasOpening(teapot, open)
+=> hasOpening(cup, openCup)
+=> within(open, openCup)

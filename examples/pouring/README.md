@@ -1,0 +1,5 @@
+- Facts to infer
+    - Can we pour?
+    - Does the current facts points to liquid spilled?
+    - Is there an overflow?
+    - What to do if there is a spilling or an overflow?

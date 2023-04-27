@@ -1,0 +1,5 @@
+=> Container(cup)
+=> Container(bowl) 
+=> contains(bowl, soup)
+=> Liquid(soup)
+=> near(cup, bowl)

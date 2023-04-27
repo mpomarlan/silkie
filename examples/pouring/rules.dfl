@@ -1,11 +1,16 @@
 # Static schemas, dynamic schema and action schema.
 # Should we consider Part-whole relation for liquids? With the notion - part of the liquid left the source.
+# Todo : Explicitly state source and destination containers? Liquid moves UP in Dest and DOWN in Source.
 
 # Affordance to check - pouring is possible only if there is source and destination in reachable space [NEAR-FAR]
 # Containedobject can just be any object, not necessarily liquid.
 0: Container(?x),  Liquid(?l), contains(?x, ?l) => canPour(?x, ?l)
-1: Container(?x), contains(?x, ?l), Container(?y), near(?x, ?y) => canPourTo(?x, ?y)
-2: Container(?x), contains(?x, ?l), Container(?y), far(?x, ?y) => -canPourTo(?x, ?y)
+
+# Ask: With the below rules, it does not infer canPourTo but after removing contains it does
+#1: Container(?x), contains(?x, ?l), Container(?y), near(?x, ?y) => canPourTo(?x, ?y)
+#2: Container(?x), contains(?x, ?l), Container(?y), far(?x, ?y) => -canPourTo(?x, ?y)
+1: Container(?x), Container(?y), near(?x, ?y) => canPourTo(?x, ?y)
+2: Container(?x), Container(?y), far(?x, ?y) => -canPourTo(?x, ?y)
 
 # When the liquid flows out, it follows a trajectory. Pouring — substance(?) moves along a path(?) from a source(?) to a destination(?). 
 # Here the source and destination are containers. Containment and SPG. IN and OUT for Source and Destination(?)
@@ -45,3 +50,6 @@
 # is long and can create a flow that will reach the destination).
 # should we go with l following a path and the goal is contained in d
 12: Container(?s), Container(?d), hasOpening(?s,?o), hasOpening(?d,?p), within(?o,?p), isTilted(?s)  =>  poursTo(?s,?d)
+
+# Containment disposition
+13: canPour(?x) => hasDisp(?x, Containment)

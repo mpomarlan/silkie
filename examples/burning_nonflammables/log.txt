@@ -1,0 +1,29 @@
+==========
+Option 1, O2 fire
+('protectedFrom', 'scroll', 'fireO2')
+('-hasDisp', 'sandpile', 'Flammable')
+==========
+Option 1, ClF3 fire
+('-hasDisp', 'sandpile', 'Flammable')
+('hasDisp', 'nstoff', 'Ignition')
+('-protectedFrom', 'scroll', 'fireClF3')
+==========
+Option 1, Both fires
+('protectedFrom', 'scroll', 'fireO2')
+('-hasDisp', 'sandpile', 'Flammable')
+('hasDisp', 'nstoff', 'Ignition')
+('-protectedFrom', 'scroll', 'fireClF3')
+==========
+Option 2, O2 fire
+('protectedFrom', 'scroll', 'fireO2')
+('-hasDisp', 'sandpile', 'Flammable')
+==========
+Option 2, ClF3 fire
+('hasDisp', 'sandpile', 'Flammable')
+('hasDisp', 'fireClF3', 'Ignition')
+('-protectedFrom', 'scroll', 'fireClF3')
+==========
+Option 2, Both fires
+('protectedFrom', 'scroll', 'fireO2')
+('hasDisp', 'fireClF3', 'Ignition')
+('-protectedFrom', 'scroll', 'fireClF3')

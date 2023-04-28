@@ -1,0 +1,18 @@
+==========
+Road trip, "path"
+('passThrough', 'car', 'thing')
+('-canAvoid', 'car', 'thing')
+==========
+Road trip, "medium"
+('canAvoid', 'car', 'thing')
+==========
+Road trip, "container"
+('passThrough', 'car', 'thing')
+('-canAvoid', 'car', 'thing')
+==========
+Container uses: blocks hence protects
+('protectedFrom', 'table', 'hotSoup')
+==========
+Container uses: protects hence blocks
+('blocks', 'bowl', 'horizontal')
+('blocks', 'bowl', 'down')

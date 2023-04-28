@@ -1,0 +1,61 @@
+# Static schemas, dynamic schema and action schema.
+# Should we consider Part-whole relation for liquids? With the notion - part of the liquid left the source.
+# Todo : Explicitly state source and destination containers? Liquid moves UP in Dest and DOWN in Source.
+
+# Affordance to check - pouring is possible only if there is source and destination in reachable space [NEAR-FAR]
+# Containedobject can just be any object, not necessarily liquid.
+0: canContain(?x,?l), Liquid(?l) => Container(?x)
+
+# Containment disposition
+1: Container(?x),  Liquid(?l), contains(?x, ?l) => canPour(?x, ?l)
+2: canPour(?x) => hasDisp(?x, Containment)
+
+# Ask: With the below rules, it does not infer canPourTo but after removing contains it does
+#1: Container(?x), contains(?x, ?l), Container(?y), near(?x, ?y) => canPourTo(?x, ?y)
+#2: Container(?x), contains(?x, ?l), Container(?y), far(?x, ?y) => -canPourTo(?x, ?y)
+
+# The opening of the source has to be within the boundary of the destination (unless the spout of the source
+# is long and can create a flow that will reach the destination).
+# should we go with l following a path and the goal is contained in d
+3: Container(?x), Container(?y), near(?x, ?y), hasOpening(?x,?o), hasOpening(?y,?p), within(?o,?p) => canPourTo(?x, ?y)
+#4: Container(?x), Container(?y), -near(?x, ?y) => -canPourTo(?x, ?y)
+
+4: canPourTo(?x,?y), Container(?s), isTilted(?s) => poursTo(?s, ?d)
+5: contains(?x, ?l) => inside(?l, ?x)
+
+# When the liquid flows out, it follows a trajectory. Pouring — substance(?) moves along a path(?) from a source(?) to a destination(?). 
+# Here the source and destination are containers. Containment and SPG. IN and OUT for Source and Destination(?)
+
+# In, Out and a Boundary/opening. Opening that can afford to let the liquid out and then in
+
+# Things contained inside the container can only come out of an opening
+# Liquid cannot penetrate solid objects
+# adapted from hobbsian road ex
+
+6: Container(?w), Liquid(?x), inside(?x,?w), outside(?y,?w), hasOpening(?w,?z), willBeAt(?x,?y) => passThrough(?x,?z)
+7: Container(?w), Liquid(?x), inside(?x,?w), outside(?y,?w), hasOpening(?w,?z), willBeAt(?x,?y) => -canAvoid(?x,?z)
+8: Container(?w), Liquid(?x), inside(?x,?w), outside(?y,?w), passThrough(?x,?z), willBeAt(?x,?y) => Opening(?z)
+
+# Verticality - gives the quantity of liquid in the container
+# Some notion of overflow - liquid outside the destination. In this case, we need to stop pouring
+9: Container(?s), Container(?d), poursTo(?s,?d), contains(?s,?w), partOf(?l,?w), contains(?d,?l), movesUp(?l), outside(?o,?d), -inside(?o,?s), partOf(?p,?l) willBeAt(?p,?o) => overflows(?d) # Should we state the liquid is overflowing?
+10: Container(?s), Container(?d), poursTo(?s,?d), overflows(?d) => -canPourTo(?s,?d)
+
+# what does spilling mean? - when a piece of liquid is outside the destination. We need to adjust the pose or the tilt angle
+# todo - can we state poursTo already
+11: Container(?s), Container(?d), contains(?s,?l), poursTo(?s,?d),  partOf(?p,?l), outside(?o,?d), willBeAt(?p,?o) => isSpilled(?p)
+12: poursTo(?s,?d), contains(?s,?l), partOf(?p,?l), isSpilled(?p) => moveTowards(?s,?d)
+
+# When the container is tipped, liquid flows out.
+# todo: when the container is tilted, l is not blocked from going outside???
+13: contains(?s,?l), hasOpening(?s,?o), isTilted(?s) => passThrough(?l,?o)
+
+# When the container is tipped rapidly or along a greater angle, more water comes out. Set the vertical axis along the source as zero
+
+# For the liquid to come out of the container, the angle of tipping has to be increased
+
+# When the liquid is spilling or flowing outside the destination container, decrease the angle of 
+# tipping to stop the flow of liquid.
+
+14: inside(?x, ?y) => -outside(?x, ?y)
+15: near(?x, ?y) => near(?y, ?x)

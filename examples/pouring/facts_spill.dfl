@@ -1,0 +1,4 @@
+=> poursTo(teapot, cup)
+=> partOf(t1, tea)
+=> outside(outsidecup, cup)
+=> willBeAt(t1, outsidecup)

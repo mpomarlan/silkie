@@ -1,0 +1,115 @@
+# Basic taxonomy-related axioms
+subclassOf(?a, ?b), subclassOf(?b, ?c) => subclassOf(?a, ?c)
+disjoint(?a, ?b) => disjoint(?b, ?a)
+disjoint(?a, ?b) => -subclassOf(?a, ?b)
+subclassOf(?a, ?b), disjoint(?b, ?c) => disjoint(?a, ?c)
+isA(?a, ?b), subclassOf(?b, ?c) => isA(?a, ?c)
+disjoint(?ac, ?bc), isA(?o, ?ac) => -isA(?o, ?bc)
+
+# Role hierarchy
+hasSupporter(?s, ?o) => hasRelatum(?s, ?o)
+hasSupportee(?s, ?o) => hasLocatum(?s, ?o)
+hasController(?s, ?o) => hasRelatum(?s, ?o)
+hasControllee(?s, ?o) => hasLocatum(?s, ?o)
+hasContainer(?s, ?o) => hasRelatum(?s, ?o)
+hasContainee(?s, ?o) => hasLocatum(?s, ?o)
+hasExcluder(?s, ?o) => hasRelatum(?s, ?o)
+hasExcludee(?s, ?o) => hasLocatum(?s, ?o)
+hasSource(?s, ?o) => hasRelatum(?s, ?o)
+hasDestination(?s, ?o) => hasRelatum(?s, ?o)
+hasRelatum(?s, ?o)  => hasSpatialParticipant(?s, ?o)
+hasLocatum(?s, ?o) => hasSpatialParticipant(?s, ?o)
+
+# Schema relations
+#  schemas coexist, which is a symmetric relation
+combine(?s, ?t) => combine(?t, ?s)
+#  schema combinations treated as snapshots, i.e. combined schemas live and expire together
+combine(?s, ?t), combine(?t, ?u) => combine(?s, ?u)
+combine(?s, ?t), follows(?t, ?u) => follows(?s, ?u)
+follows(?s, ?t), combine(?t, ?u) => follows(?s, ?u)
+requires(?s, ?t), requires(?s, ?u) => combine(?t, ?u)
+#  one schema continues to exist/enters into existence after the other finishes, hence this relation is asymmetric
+follows(?s, ?t) => -follows(?t, ?s)
+#  where schemas combine, their requirements combine
+combine(?s, ?t), requires(?s, ?u), requires(?t, ?v) => combine(?u, ?v)
+
+# Containment/Exclusion
+#  Containment is transitive
+hasContainer(?s, ?c), hasContainee(?s, ?o), hasContainer(?t, ?o), hasContainee(?t, ?p), combine(?s, ?t) => hasContainee(?s, ?p)
+hasContainer(?s, ?c), hasContainee(?s, ?o), hasContainer(?t, ?o), hasContainee(?t, ?p), combine(?s, ?t) => hasContainer(?t, ?c)
+#  If an object is excluded, so is its contents
+hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?c), combine(?s, ?t) => hasExcludee(?t, ?o)
+#  If an object is excluded, so is its container
+hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?o), combine(?s, ?t) => hasExcludee(?t, ?c)
+#  If an object is an excluder, so is its contents
+hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcluder(?t, ?c), combine(?s, ?t) => hasExcluder(?t, ?o)
+#  Containment is destroyed when the contents leaves the container
+requires(?t, ?d), follows(?t, ?s), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcluder(?t, ?c), hasExcludee(?t, ?o) => isA(?d, Exit)
+requires(?t, ?d), follows(?t, ?s), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcluder(?t, ?c), hasExcludee(?t, ?o) => hasTrajector(?d, ?o)
+requires(?t, ?d), follows(?t, ?s), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcluder(?t, ?c), hasExcludee(?t, ?o) => hasSource(?d, ?c)
+requires(?t, ?d), follows(?t, ?s), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?c), hasExcluder(?t, ?o) => isA(?d, Exit)
+requires(?t, ?d), follows(?t, ?s), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?c), hasExcluder(?t, ?o) => hasTrajector(?d, ?o)
+requires(?t, ?d), follows(?t, ?s), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?c), hasExcluder(?t, ?o) => hasSource(?d, ?c)
+#  Containment is created when something enters the container
+requires(?s, ?d), follows(?s, ?t), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcluder(?t, ?c), hasExcludee(?t, ?o) => isA(?d, Entry)
+requires(?s, ?d), follows(?s, ?t), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcluder(?t, ?c), hasExcludee(?t, ?o) => hasTrajector(?d, ?o)
+requires(?s, ?d), follows(?s, ?t), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcluder(?t, ?c), hasExcludee(?t, ?o) => hasDestination(?d, ?c)
+requires(?s, ?d), follows(?s, ?t), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?c), hasExcluder(?t, ?o) => isA(?d, Entry)
+requires(?s, ?d), follows(?s, ?t), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?c), hasExcluder(?t, ?o) => hasTrajector(?d, ?o)
+requires(?s, ?d), follows(?s, ?t), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?c), hasExcluder(?t, ?o) => hasDestination(?d, ?c)
+
+# Linkage, Contact
+#  Linkages typically require contact
+isA(?s, Linkage) => isA(?s, Contact)
+#  Contact prevents nearing
+isA(?s, Contact), prevents(?s, ?t) => isA(?t, Nearing)
+isA(?s, Contact), prevents(?s, ?t), hasRelatum(?s, ?o) => hasRelatum(?t, ?o)
+isA(?s, Contact), prevents(?s, ?t), hasLocatum(?s, ?o) => hasTrajector(?t, ?o)
+#  Linkage prevents distancing
+isA(?s, Linkage), prevents(?s, ?t) => isA(?t, Departing)
+isA(?s, Linkage), prevents(?s, ?t), hasRelatum(?s, ?o) => hasRelatum(?t, ?o)
+isA(?s, Linkage), prevents(?s, ?t), hasLocatum(?s, ?o) => hasTrajector(?t, ?o)
+isA(?s, Departing), prevents(?t, ?s) => isA(?t, Linkage)
+isA(?s, Departing), prevents(?t, ?s), hasRelatum(?s, ?o) => hasRelatum(?t, ?o)
+isA(?s, Departing), prevents(?t, ?s), hasTrajector(?s, ?o) => hasLocatum(?t, ?o)
+#  RigidLinkage prevents movement
+isA(?s, RigidLinkage), prevents(?s, ?t) => isA(?t, Movement)
+
+# Support
+#  Support typically requires contact
+isA(?s, Support) => isA(?s, Contact)
+#  Support prevents falling
+isA(?s, Support), prevents(?s, ?t) => isA(?t, Falling)
+isA(?s, Support), prevents(?s, ?t), hasRelatum(?s, ?o) => hasRelatum(?t, ?o)
+isA(?s, Support), prevents(?s, ?t), hasLocatum(?s, ?o) => hasTrajector(?t, ?o)
+isA(?s, Falling), prevents(?t, ?s) => isA(?t, Support)
+isA(?s, Falling), prevents(?t, ?s), hasRelatum(?s, ?o) => hasRelatum(?t, ?o)
+isA(?s, Falling), prevents(?t, ?s), hasTrajector(?s, ?o) => hasLocatum(?t, ?o)
+
+###isA(?s, Movement), requires(?s, ?d), isA(?d, GravityApplication) => isA(?s, Falling)
+###isA(?s, Falling), isA(?s, Exit), isA(?t, Entry), combine(?s, ?t), hasTrajector(?s, ?l), hasTrajector(?t, ?tr), hasRelatum(?s, ?sr), hasRelatum(?t, ?tr), isA(?p, Placement), ... => above...
+###isA(?s, Exit), isA(?t, Stillness), requires(?s, ?d), replaces(?s, ?t) => isA(?d, ForceApplication)
+###isA(?s, Exit), isA(?t, Stillness), requires(?s, ?d), replaces(?s, ?t), hasTrajector(?s, ?o), hasDisposition(?o, Flowing.Theme) => isA(?d, GravityApplication)
+
+
+# Perception-related
+isA(?s, Placement), hasLocatum(?s, ?l), hasRelatum(?s, ?r) => Q_position(?l, ?r)
+isA(?s, Placement), hasLocatum(?s, ?l), hasRelatum(?s, ?r) => Q_velocity(?l, ?r)
+isA(?s, Movement), hasTrajector(?s, ?l), hasRelatum(?s, ?r) => Q_position(?l, ?r)
+isA(?s, Movement), hasTrajector(?s, ?l), hasRelatum(?s, ?r) => Q_velocity(?l, ?r)
+isA(?s, Entry), hasRelatum(?s, ?c) => Q_opening(?c)
+isA(?s, Movement), hasWaypoint(?c, ?w), hasTrajector(?s, ?l) => Q_velocity(?l, ?w)
+isA(?s, Exit), hasRelatum(?s, ?c) => Q_opening(?c)
+isA(?s, Exit), isA(?t, Entry), hasRelatum(?s, ?sr), hasRelatum(?t, ?tr), hasTrajector(?s, ?l), hasTrajector(?t, ?l) => Q_position(?sr, ?tr)
+isA(?s, Exit), isA(?t, Entry), hasRelatum(?s, ?sr), hasRelatum(?t, ?tr), hasTrajector(?s, ?l), hasTrajector(?t, ?l) => Q_velocity(?sr, ?tr)
+
+# Object/disposition related
+crockery_opening: opening(?o, ?c), isA(?c, Crockery), hasRelatum(?s, ?c), isA(?s, Access) => hasWaypoint(?s, ?o)
+teapot_exit: spout(?o, ?c), isA(?c, Teapot), hasRelatum(?s, ?c), isA(?s, Entry) => -hasWaypoint(?s, ?o)
+
+#containment: liquid in cup; UNSTABLE -> liquid in bowl; STABLE
+#exclusion: liquid not in bowl; UNSTABLE -> liquid not in cup; STABLE
+#support: bowl on table; STABLE
+#RigidLinkage: cup in hand; STABLE
+#exclusion: cup not in bowl; STABLE
+

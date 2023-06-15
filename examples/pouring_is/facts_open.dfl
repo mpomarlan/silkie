@@ -1,0 +1,14 @@
+-> opening(cupOpening, cup)
+-> opening(bowlOpening, bowl)
+-> isA(cupOpen, PortalOpen)
+-> hasParticipant(cupOpen, cupOpening)
+-> isA(bowlOpen, PortalOpen)
+-> hasParticipant(bowlOpen, bowlOpening)
+-> combine(cupOpen, bowlOpen)
+-> combine(cupOpen, coffeeInCup)
+
+-> requires(requirement_coffeeInBowl, requirement_requirement_coffeeInBowl)
+-> requires(requirement_coffeeNotInCup, requirement_requirement_coffeeNotInCup)
+
+-> combine(requirement_coffeeInBowl, requirement_coffeeInBowl)
+-> combine(requirement_coffeeInBowl, coffeeInBowl)

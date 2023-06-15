@@ -57,6 +57,13 @@ requires(?s, ?d), follows(?s, ?t), hasContainer(?s, ?c), hasContainee(?s, ?o), h
 requires(?s, ?d), follows(?s, ?t), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?c), hasExcluder(?t, ?o) => isA(?d, Entry)
 requires(?s, ?d), follows(?s, ?t), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?c), hasExcluder(?t, ?o) => hasTrajector(?d, ?o)
 requires(?s, ?d), follows(?s, ?t), hasContainer(?s, ?c), hasContainee(?s, ?o), hasExcludee(?t, ?c), hasExcluder(?t, ?o) => hasDestination(?d, ?c)
+requires(?s, ?d), follows(?s, ?t), isA(?t, PortalClosed), hasParticipant(?t, ?o), isA(?s, Access), hasRelatum(?s, ?c), hasWaypoint(?s, ?o), opening(?o, ?c) => isA(?d, PortalOpen)
+requires(?s, ?d), follows(?s, ?t), isA(?t, PortalClosed), hasParticipant(?t, ?o), isA(?s, Access), hasRelatum(?s, ?c), hasWaypoint(?s, ?o), opening(?o, ?c) => hasParticipant(?d, ?o)
+follows(?s, ?t), isA(?t, PortalOpen), hasParticipant(?t, ?o), isA(?s, Access), hasRelatum(?s, ?c), hasWaypoint(?s, ?o), opening(?o, ?c) => enables(?t, ?s)
+requires(?s, ?d), follows(?s, ?t), isA(?t, PortalOpen), hasParticipant(?t, ?o), isA(?s, Access), hasRelatum(?s, ?c), hasWaypoint(?s, ?o), opening(?o, ?c), hasTrajector(?s, ?l) => isA(?d, ForceApplication)
+requires(?s, ?d), follows(?s, ?t), isA(?t, PortalOpen), hasParticipant(?t, ?o), isA(?s, Access), hasRelatum(?s, ?c), hasWaypoint(?s, ?o), opening(?o, ?c), hasTrajector(?s, ?l) => hasRelatum(?d, ?c)
+requires(?s, ?d), follows(?s, ?t), isA(?t, PortalOpen), hasParticipant(?t, ?o), isA(?s, Access), hasRelatum(?s, ?c), hasWaypoint(?s, ?o), opening(?o, ?c), hasTrajector(?s, ?l) => hasPatient(?d, ?l)
+
 
 # Linkage, Contact
 #  Linkages typically require contact
@@ -86,10 +93,14 @@ isA(?s, Falling), prevents(?t, ?s) => isA(?t, Support)
 isA(?s, Falling), prevents(?t, ?s), hasRelatum(?s, ?o) => hasRelatum(?t, ?o)
 isA(?s, Falling), prevents(?t, ?s), hasTrajector(?s, ?o) => hasLocatum(?t, ?o)
 
-###isA(?s, Movement), requires(?s, ?d), isA(?d, GravityApplication) => isA(?s, Falling)
-###isA(?s, Falling), isA(?s, Exit), isA(?t, Entry), combine(?s, ?t), hasTrajector(?s, ?l), hasTrajector(?t, ?tr), hasRelatum(?s, ?sr), hasRelatum(?t, ?tr), isA(?p, Placement), ... => above...
-###isA(?s, Exit), isA(?t, Stillness), requires(?s, ?d), replaces(?s, ?t) => isA(?d, ForceApplication)
-###isA(?s, Exit), isA(?t, Stillness), requires(?s, ?d), replaces(?s, ?t), hasTrajector(?s, ?o), hasDisposition(?o, Flowing.Theme) => isA(?d, GravityApplication)
+# Verticality, gravity, falling ...
+isA(?d, GravityApplication), requires(?s, ?d), isA(?s, Movement), hasTrajector(?s, ?l), hasRelatum(?s, ?r), requires(?d, ?t) => isA(?t, Above)
+isA(?d, GravityApplication), requires(?s, ?d), isA(?s, Departing), hasRelatum(?s, ?r), requires(?d, ?t) => hasLocatum(?t, ?r)
+isA(?d, GravityApplication), requires(?s, ?d), isA(?s, Departing), hasWaypoint(?s, ?l), requires(?d, ?t) => hasRelatum(?t, ?l)
+isA(?d, GravityApplication), requires(?s, ?d), isA(?s, Nearing), hasRelatum(?s, ?r), requires(?d, ?t) => hasRelatum(?t, ?r)
+isA(?d, GravityApplication), requires(?s, ?d), isA(?s, Nearing), hasWaypoint(?s, ?l), requires(?d, ?t) => hasLocatum(?t, ?l)
+#combine(?s, ?t), isA(?s, Above), isA(?t, Above), hasLocatum(?s, ?l), hasRelatum(?s, ?r), hasLocatum(?t, ?r), hasRelatum(?t, ?p) => hasRelatum(?s, ?p)
+#combine(?s, ?t), isA(?s, Above), isA(?t, Above), hasLocatum(?s, ?l), hasRelatum(?s, ?r), hasLocatum(?t, ?r), hasRelatum(?t, ?p) => hasLocatum(?t, ?l)
 
 
 # Perception-related
@@ -102,10 +113,17 @@ isA(?s, Movement), hasWaypoint(?c, ?w), hasTrajector(?s, ?l) => Q_velocity(?l, ?
 isA(?s, Exit), hasRelatum(?s, ?c) => Q_opening(?c)
 isA(?s, Exit), isA(?t, Entry), hasRelatum(?s, ?sr), hasRelatum(?t, ?tr), hasTrajector(?s, ?l), hasTrajector(?t, ?l) => Q_position(?sr, ?tr)
 isA(?s, Exit), isA(?t, Entry), hasRelatum(?s, ?sr), hasRelatum(?t, ?tr), hasTrajector(?s, ?l), hasTrajector(?t, ?l) => Q_velocity(?sr, ?tr)
+isA(?s, Access), hasRelatum(?s, ?c), hasWaypoint(?s, ?o), opening(?o, ?c) => Q_open(?o)
 
-# Object/disposition related
-crockery_opening: opening(?o, ?c), isA(?c, Crockery), hasRelatum(?s, ?c), isA(?s, Access) => hasWaypoint(?s, ?o)
-teapot_exit: spout(?o, ?c), isA(?c, Teapot), hasRelatum(?s, ?c), isA(?s, Entry) => -hasWaypoint(?s, ?o)
+
+# Object/disposition related rules
+descon_opening: opening(?o, ?c), isA(?c, Container), hasRelatum(?s, ?c), isA(?s, Access) => hasWaypoint(?s, ?o)
+spout_noentry: isA(?o, Spout), opening(?o, ?c), hasRelatum(?s, ?c), isA(?s, Entry) => -hasWaypoint(?s, ?o)
+spout_noentry > descon_opening
+top_exit: isA(?o, TopOpening), opening(?o, ?c), hasRelatum(?s, ?c), isA(?s, Exit) => -hasWaypoint(?s, ?o)
+top_exit > descon_opening
+fluid_transfer_by_gravity: requires(?s, ?d), isA(?s, Access), hasRelatum(?s, ?c), hasWaypoint(?s, ?o), opening(?o, ?c), hasTrajector(?s, ?l), isA(?d, ForceApplication), isA(?l, Fluid) => isA(?d, GravityApplication)
+
 
 #containment: liquid in cup; UNSTABLE -> liquid in bowl; STABLE
 #exclusion: liquid not in bowl; UNSTABLE -> liquid not in cup; STABLE

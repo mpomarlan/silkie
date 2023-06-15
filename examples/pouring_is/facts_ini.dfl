@@ -1,0 +1,10 @@
+-> isA(coffeeInCup, Containment)
+-> hasContainer(coffeeInCup, cup)
+-> hasContainee(coffeeInCup, coffee)
+-> isA(cupOutOfBowl, Exclusion)
+-> hasExcluder(cupOutOfBowl, bowl)
+-> hasExcludee(cupOutOfBowl, cup)
+-> combine(coffeeInCup, cupOutOfBowl)
+
+-> follows(coffeeInBowl, coffeeInCup)
+

@@ -1,0 +1,5 @@
+-> requires(requirement_requirement_coffeeInBowl, requirement_requirement_requirement_coffeeInBowl)
+-> requires(requirement_requirement_coffeeNotInCup, requirement_requirement_requirement_coffeeNotInCup)
+
+-> combine(requirement_requirement_coffeeInBowl, requirement_requirement_coffeeInBowl)
+-> combine(requirement_requirement_coffeeInBowl, coffeeInBowl)

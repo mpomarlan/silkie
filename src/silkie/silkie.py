@@ -60,6 +60,25 @@
 #     [nq] <- empty # set inside the attractor if and only if -dq not proven
 
 # Operator flags
+
+canVisualize = True
+canPlot = True
+
+try:
+    import igraph as ig
+except:
+    canVisualize = False
+    print("Cannot import igraph, make sure it is installed (e.g., pip3 install igraph). Will not produce visualizations at all.")
+
+try:
+    import matplotlib.pyplot as plt
+except:
+    canPlot = False
+    if canVisualize:
+        print("Cannot import matplotlib.pyplot, make sure it is installed (e.g., pip3 install matplotlib). Will not produce plots, but may save visualizations to a file.")
+    else:
+        print("Cannot import matplotlib.pyplot, make sure it is installed (e.g., pip3 install matplotlib).")
+    
 STRICT = 1
 DEFEASIBLE = 2
 DEFEATER = 3
@@ -82,6 +101,7 @@ class Conclusions:
 class Vertex:
     def __init__(self,dbg=None):
         self.dbg=dbg
+        self.visVert = None
         self.enabled = True
         self.inverts = []
         self.inAttractor = False
@@ -98,6 +118,8 @@ class Vertex:
         vertex._onAddedAsInVert()
     def fallIn(self, events):
         self.inAttractor = True
+        if self.visVert is not None:
+            self.visVert["reached"] = True
         for iv in self.inverts:
             events.append(iv)
         return events
@@ -145,7 +167,8 @@ def attractor(verts):
 def opposesAssertion(q, r):
     return (((q == -r.consequent) and (not (DEFEATER == r.operator))) or ((q == r.consequent) and (DEFEATER == rj.operator)))
 
-def dflInference(theory, teamDefeat=True, ambiguityPropagation=True, wellFoundedness=True):
+def dflInference(theory, teamDefeat=True, ambiguityPropagation=True, wellFoundedness=True,i2s=None,plotWindow=None,visFile=None):
+    doVisualize = canVisualize and (i2s is not None) and ((plotWindow is not None) or (visFile is not None))
     retq = Conclusions()
     # Stage 0: construct maps from theory entities to vertices in the inference graphs
     verts = 0
@@ -188,6 +211,24 @@ def dflInference(theory, teamDefeat=True, ambiguityPropagation=True, wellFounded
         mU = {r: EvenVertex("-U%d"%r) for r in rules} # [-U]
     if wellFoundedness:
         x = {}
+    visGraph = None
+    if doVisualize:
+        visGraph = ig.Graph(0,[],directed=True)
+        visMap = {}
+        for l, e in pd.items():
+            la, s = l, '+'
+            if 0 > l:
+                la, s = -l, '-'
+            e.visVert = visGraph.add_vertex(name=s+"%s(%s,%s)" % (i2s[la][0], i2s[la][1], i2s[la][2]),etype='+d',reached=False)
+            visMap[('+d', l)] = e.visVert
+        for r, e in pT.items():
+            e.visVert = visGraph.add_vertex(etype="+r",reached=False)
+            visMap[('+r', r)] = e.visVert
+        for x in theory:
+            rv = visMap[('+r', x.id)]
+            visGraph.add_edge(rv, visMap[('+d',x.consequent)])
+            for a in x.antecedent:
+                visGraph.add_edge(visMap[('+d',a)], rv)
     # Stage 1: construct the inference graph for well-founded strict inference and run lfp of operator
     strictInference = [pD[l] for l in pD.keys()] + [pF[r] for r in pF.keys()]
     for r in theory:
@@ -400,6 +441,27 @@ def dflInference(theory, teamDefeat=True, ambiguityPropagation=True, wellFounded
                 retq.supportable.add(l) 
             elif md[l].inAttractor:
                 retq.unsupportable.add(l) 
+    if doVisualize:
+        visGraph.delete_vertices([x.index for x in visGraph.vs if not x["reached"]])
+        if visFile is not None:
+            visGraph.save(visFile)
+        if plotWindow is not None:
+            ig.plot(visGraph,
+                    target=plotWindow,
+                    layout="reingold_tilford",
+                    vertex_size=15,
+                    vertex_color=["steelblue" if t == "+r" else "salmon" for t in visGraph.vs["etype"]],
+                    vertex_shape=["square" if t == "+r" else "diamond" for t in visGraph.vs["etype"]],
+                    vertex_frame_width=0.0,
+                    vertex_frame_color="white",
+                    vertex_label=visGraph.vs["name"],
+                    vertex_font="bold",
+                    vertex_label_size=5.0,
+                    vertex_label_dist=1.0,
+                    edge_arrow_size=5,
+                    edge_arrow_width=5,
+                    edge_width=[1 for x in range(len(visGraph.es))],
+                    edge_color=["#7142cf" for x in range(len(visGraph.es))])
     return retq
 
 

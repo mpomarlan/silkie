@@ -12,10 +12,15 @@ try:
 except:
     pass
 
-def reportTargetConclusions(theory, i2s, whitelist,plotWindow=None):
+def reportTargetConclusions(theory, i2s, whitelist,plotWindow=None,graphStoragePrefix=None,k=0):
     if plotWindow is not None:
         plt.cla()
-    conclusions = silkie.dflInference(theory,i2s=i2s,plotWindow=plotWindow)
+    if "" == graphStoragePrefix:
+        graphStoragePrefix = None
+    visFile=None
+    if graphStoragePrefix is not None:
+        visFile = graphStoragePrefix + "_%d.gml" % k
+    conclusions = silkie.dflInference(theory,i2s=i2s,plotWindow=plotWindow,visFile=visFile)
     conclusions = silkie.idx2strConclusions(conclusions, i2s)
     for c in conclusions.defeasiblyProvable:
         if c[0] in whitelist:
@@ -27,10 +32,12 @@ def reportTargetConclusions(theory, i2s, whitelist,plotWindow=None):
 
 def main():
     parser = argparse.ArgumentParser(prog="flammability_example", description="Run an example for the silkie reasoner.", epilog="")
-    parser.add_argument('-v', '--visualize', action='store_true', help='Enable visualization')
+    parser.add_argument('-v', '--visualize', action='store_true', help='Enable visualization.')
+    parser.add_argument('-s', '--storeplots', default='', help='Prefix of filenames to store visualizations in.')
     arguments = parser.parse_args()
     doVisualize = arguments.visualize
     
+    k = 0
     plotWindow = None
     if doVisualize:
         fig, plotWindow = plt.subplots(figsize=(7,7))
@@ -57,7 +64,8 @@ def main():
         theory, i2s, msg = scnSpec
         print('==========\n%s' % msg)
         
-        reportTargetConclusions(theory, i2s, ['protectedFrom', '-protectedFrom', 'hasDisp', '-hasDisp'], plotWindow=plotWindow)
+        reportTargetConclusions(theory, i2s, ['protectedFrom', '-protectedFrom', 'hasDisp', '-hasDisp'], plotWindow=plotWindow,graphStoragePrefix=arguments.storeplots,k=k)
+        k += 1
 
 if __name__ == '__main__':
     main()

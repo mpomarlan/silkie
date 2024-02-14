@@ -215,13 +215,15 @@ def dflInference(theory, teamDefeat=True, ambiguityPropagation=True, wellFounded
     if doVisualize:
         visGraph = ig.Graph(0,[],directed=True)
         visMap = {}
-        for l, e in pd.items():
+        for l in sorted(pd.keys()):
+            e = pd[l]
             la, s = l, '+'
             if 0 > l:
                 la, s = -l, '-'
             e.visVert = visGraph.add_vertex(name=s+"%s(%s,%s)" % (i2s[la][0], i2s[la][1], i2s[la][2]),etype='+d',reached=False)
             visMap[('+d', l)] = e.visVert
-        for r, e in pT.items():
+        for r in sorted(pT.keys()):
+            e = pT[r]
             e.visVert = visGraph.add_vertex(etype="+r",reached=False)
             visMap[('+r', r)] = e.visVert
         for x in theory:

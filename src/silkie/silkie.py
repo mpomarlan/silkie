@@ -450,7 +450,7 @@ def dflInference(theory, teamDefeat=True, ambiguityPropagation=True, wellFounded
         if plotWindow is not None:
             ig.plot(visGraph,
                     target=plotWindow,
-                    layout="reingold_tilford",
+                    layout="davidson_harel",
                     vertex_size=15,
                     vertex_color=["steelblue" if t == "+r" else "salmon" for t in visGraph.vs["etype"]],
                     vertex_shape=["square" if t == "+r" else "diamond" for t in visGraph.vs["etype"]],

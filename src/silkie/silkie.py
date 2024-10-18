@@ -540,7 +540,7 @@ class PFact:
         def _updateUsedFacts(usedFacts, p, s, o):
             if usedFacts is not None:
                 if p not in usedFacts:
-                    usedFacts[p] = PFact()
+                    usedFacts[p] = PFact(p)
                 usedFacts[p].addFact(s, o, self._po[o][s])
         retq = []
         for bdg in bdgs:

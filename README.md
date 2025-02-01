@@ -4,6 +4,10 @@ This is a reasoner for defeasible logic, the Billington version and its team def
 
 For a deeper overview of defeasible logic -- its proof theory and various features --, see [the PhD thesis of Ho Pun Lam, "On the Derivability of Defeasible Logic" (School of Information Technology and Electrical Engineering, The University of Queensland, 2012)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=af3ab919ac4ac8b927c8f179b9ce52dba81285ad).
 
+## Dependencies
+
+Outside of standard python packages (and in the future, standard C headers), NONE. A deliberately small dependency footprint is part of the desiderata behind silkie. It should therefore be possible to run this on a very wide variety of platforms, OSes, python versions etc.
+
 ## Defeasible logic (a very short intro)
 
 Defeasible logic is a rule-based inference system which allows reasoning with defaults and exceptions. That is, one can specify what would be reasonable to infer in some situation, absent further information, while also specifying how some of these conclusions may be changed or retracted if more information is available. The prototypical, simple example of a defeasible inference pattern would be the following:

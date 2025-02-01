@@ -45,6 +45,14 @@ Variables are denoted by question marks in front of a name, e.g. "?x"; a variabl
 
 Note that a variable exists only inside a rule. Two rules may have variables with the same name (as above) but these are different variables and may, in principle, be bound to different entities.
 
+Through inference, defeasible logic arrives at conclusions of the following types:
+* strictly provable: a term is provable with certainty; this is only possible via strict rules, from strict facts.
+* defeasibly provable: a terms is defeasible provable, i.e. believed based on the available evidence, but may be overturned by further information.
+* strictly unprovable: there is no chain of strict rules that can proceed from known facts to the term.
+* defeasibly unprovable: there is no undefeated chain of defeasible rules that proceed from known facts to the term.
+
+An important observation here is that while a term and its negation are never defeasibly provable together, it is possible for both of them to be defeasibly unprovable at once -- in such a case, we simply don't know either way.
+
 ## Supported features of the propositional defeasible logic language
 
 * strict rules

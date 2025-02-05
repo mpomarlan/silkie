@@ -1,3 +1,5 @@
+![Silkie -- defeasible logic reasoner logo, showing a stylized silkie chicken.](Main.png "Silkie -- defeasible logic reasoner")
+
 # silkie
 
 This is a reasoner for defeasible logic, the Billington version and its team defeat/no team defeat, ambiguity propagation/blocking variants, with an option for loop detection. The goal here is to construct a fast reasoner tailored to applications related to robotics, in particular rapid commonsense-like reasoning to analyze perceptual results and (re)configure control and perception modules. Thus, silkie makes a distinction between "background" knowledge, which can be large, and situational knowledge, which usually is smaller in size, and lazily uses background knowledge only if called upon by inferences starting from situational knowledge. 
@@ -100,3 +102,7 @@ For theory files:
 * conflict sets (sets of terms that cannot be all true together) for more complex conflict relations
 * "groupings" for conclusions (similar to modalities but do not stack)
 * align serialization options to other rule based reasoners, in particular [Guido Governatori's implementation](https://github.com/gvdgdo/Defeasible-Deontic-Logic).
+
+## Thanks
+
+To [@larshurrelb](https://www.github.com/larshurrelb) for the logo.

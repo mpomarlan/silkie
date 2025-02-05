@@ -1,4 +1,4 @@
-![Silkie -- defeasible logic reasoner logo, showing a stylized silkie chicken.](Main.png "Silkie -- defeasible logic reasoner")
+<img alt="Silkie -- defeasible logic reasoner logo, showing a stylized silkie chicken." src="Main.png" width="300" />
 
 # silkie
 
